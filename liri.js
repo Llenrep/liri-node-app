@@ -1,32 +1,45 @@
 require("dotenv").config();
-var Spotify = require('node-spotify-api');
+
+var spotify = require('node-spotify-api');
+
+var fs = require("fs");
+
 var axios = require("axios");
 
 var command = process.argv[2]
 var objOfInterest = process.argv[3]
+var artist = process.argv[3]
+var date = process.argv[4] //MM/DD/YYYY
+// eventDate = moment(date, "MM/DD/YYYY")
 /*
 BandsInTown API = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=42da45a0ffa6b10f2e5b56acac6fa4a0" <--- Artist Information?
 OMDB API = "http://www.omdbapi.com/?i=tt3896198&apikey=150b895d"
 
+                                var = artist name                                                var date (in MM/DD/YYY)
+https://rest.bandsintown.com/artists/Kanye/events?app_id=42da45a0ffa6b10f2e5b56acac6fa4a0&date=2015-05-05
 */
+
+
 if (command === `concert-this`) {
-    var queryURL = "https://rest.bandsintown.com/artists/" + objOfInterest + "/events?app_id=42da45a0ffa6b10f2e5b56acac6fa4a0"
-    
-    var nameOfVenue;
-    var venueLocation;
-    // var eventDate = moment().format("MM/DD/YYYY");
 
-    axios.get(queryURL).catch(err).then(
-        function(response) {
+    axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=42da45a0ffa6b10f2e5b56acac6fa4a0").then(
+        function (response) {
+            console.log(response.data);
 
-          console.log(response);
-          conseole.log("We got results");
+            var show = [
+                "Artist: " + objOfInterest,
+                "Name Of The Venue: " + response.data,
+                "Venue Location: " + response.data,
+                "Venue Date: " + response.data
+            ].join("\n\n");
 
+
+            // console.log("---------------------------\nInfo: \n" + "\n" + show + "\n");
         }
     );
 
 } else if (command === 'spotify-this-song') {
-// need it so that if user does not pick a song after command, default to -The Sign, by Ace of Base-
+    // need it so that if user does not pick a song after command, default to -The Sign, by Ace of Base-
     if (objOfInterest === undefined) {
 
         var artist = "Ace of Base";
@@ -39,16 +52,35 @@ if (command === `concert-this`) {
         var artist;
         var songName;
         var preview;
-        var album;  
+        var album;
 
     }
 
 } else if (command === `movie-this`) {
 
-    console.log(command);
+    axios.get("http://www.omdbapi.com/?t=" + objOfInterest + "&y=&plot=short&apikey=150b895d").then(
+        function (response) {
+
+            var show = [
+                "Name: " + response.data.Title,
+                "Runtime: " + response.data.Runtime,
+                "Genre: " + response.data.Genre,
+                "Rating: " + response.data.Rated,
+                "Writer: " + response.data.Released,
+                "Director: " + response.data.Director,
+                "Plot: " + response.data.Plot
+            ].join("\n\n")
+
+            console.log(show)
+
+            fs.appendFile("log.txt", show + "\n-------------------------------------\n\n", function (err) {
+                if (err) throw err
+            })
+        }
+    );
 
 } else if (command === `do-what-it-says`) {
-
+    // must be done after spotify thing is done
     console.log(command);
 }
 
