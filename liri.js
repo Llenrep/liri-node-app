@@ -24,17 +24,17 @@ if (command === `concert-this`) {
 
     axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=42da45a0ffa6b10f2e5b56acac6fa4a0").then(
         function (response) {
-            console.log(response.data);
+            // console.log(response.data[1]);
 
             var show = [
                 "Artist: " + objOfInterest,
-                "Name Of The Venue: " + response.data,
-                "Venue Location: " + response.data,
-                "Venue Date: " + response.data
+                "Name Of The Venue: " + response.data[1].venue.name,
+                "Venue Location: " + response.data[1].venue.latitude +", " + response.data[1].venue.longitude,
+                "Venue Date: " + response.data[1].datetime //moment(response.data[1].datetime, "YYYY-MM-DD").format("DD/MM/YYYY")
             ].join("\n\n");
 
 
-            // console.log("---------------------------\nInfo: \n" + "\n" + show + "\n");
+            console.log("---------------------------\nInfo: \n" + "\n" + show + "\n");
         }
     );
 
